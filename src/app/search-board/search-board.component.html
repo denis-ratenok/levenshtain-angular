@@ -1,2 +1,11 @@
-<input [(ngModel)]="searchWord" (ngModelChange)="handleChange($event)"/>
-<p *ngFor="let name of suitableNames">{{name}}</p>
+<input [(ngModel)]="searchWord" (ngModelChange)="handleChange($event)" (keydown)="arrowPress($event.keyCode)"/>
+<ul tabindex="0" #ulProposed>
+  <li *ngFor="let name of suitableNames; let i = index"
+      tabindex="-1"
+      (click)="handleSelect(name)"
+      [ngClass]="{focus: i === numberSelectName}"
+  >
+    <app-proposed-item [value]="name"></app-proposed-item>
+  </li>
+</ul>
+

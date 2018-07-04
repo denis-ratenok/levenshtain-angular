@@ -7,11 +7,13 @@ import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {DataService} from './services/data.service';
 import {LevenshtainService} from './services/levenshtain.service';
+import { ProposedItemComponent } from './proposed-item/proposed-item.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchBoardComponent,
+    ProposedItemComponent,
   ],
   imports: [
     BrowserModule,

@@ -13,8 +13,12 @@ export class LevenshtainService {
       return 0;
     }
 
-    if (str1.includes(str2) || str2.includes(str1)) {
-      return Math.abs(str1.length - str2.length);
+    if (str2.startsWith(str1)) {
+      return 0.5;
+    }
+
+    if (str1.includes(str2)) {
+      return str1.length - str2.length;
     }
 
     const variantsOfStrings = [{str1, str2, deep: 0}];
@@ -48,6 +52,7 @@ export class LevenshtainService {
 
   levenshtainDistance = (str1, str2) => {
     const arr = [];
+    const modifications = [];
 
     for (let i = 0; i <= str1.length; i++) {
       const line = [];
@@ -68,6 +73,53 @@ export class LevenshtainService {
       arr.push(line);
     }
 
-    return arr[str1.length][str2.length];
+    this.findModifications(arr, arr[str1.length][str2.length], modifications);
+    return modifications.length;
+  }
+
+  findModifications(arr, distance, modifications) {
+    const i = arr.length - 1,
+      j = arr[0].length - 1;
+
+    if (!i && !j) {
+      return modifications;
+    }
+
+    if (!i && arr[i][j - 1] < distance) {
+      this.changeModifications('insert', modifications, distance, j);
+
+      arr.map(list => { list.pop(); });
+    } else if (!j && arr[i - 1][j] < distance) {
+      this.changeModifications('delete', modifications, distance, j);
+      arr.pop();
+    }	else if (arr[i - 1][j - 1] <= arr[i - 1][j] && arr[i - 1][j - 1] <= arr[i][j - 1]) {
+      if (arr[i - 1][j - 1] < distance) {
+        this.changeModifications('replace', modifications, distance, j);
+      }
+
+      arr.pop();
+      arr.map(list => { list.pop(); });
+    } else if (arr[i - 1][j] <= arr[i][j - 1]) {
+      if (arr[i - 1][j] < distance) {
+        this.changeModifications('delete', modifications, distance, j);
+      }
+
+      arr.pop();
+    } else {
+      if (arr[i][j - 1] < distance) {
+        this.changeModifications('insert', modifications, distance, j);
+      }
+
+      arr.map(list => {list.pop(); });
+    }
+
+    return this.findModifications(arr, distance, modifications);
+  }
+  changeModifications(method, modifications, distance, j) {
+    modifications.push({
+      position: j - 1,
+      method
+    });
+    distance--;
   }
 }
