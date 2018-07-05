@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {LevenshtainService} from '../services/levenshtain.service';
 
@@ -14,7 +14,8 @@ export class SearchBoardComponent implements OnInit {
   searchWord = '';
   numberSelectName = -1;
   constructor(private dataService: DataService, private levenshtainService: LevenshtainService) {}
-
+  @Input() distanceLimit: number;
+  @Input() wordsLimit: number;
   @ViewChild('ulProposed') ulProposed: ElementRef;
 
   handleChange(value) {
@@ -23,16 +24,17 @@ export class SearchBoardComponent implements OnInit {
       this.suitableNames = [];
       return;
     }
-    const distancesNames = [];
+    let distancesNames = [];
     for (const name of Object.keys(this.allNames)) {
-      const distance = this.levenshtainService.getLevenshtainDistanceWithSwap(value, name);
-      distancesNames.push({name, distance});
+      const distance = this.levenshtainService.getDistanceWithSwap(value, name, this.distanceLimit);
+      if (distance !== undefined) {
+        distancesNames.push({name, distance});
+      }
     }
 
-    let suitableDistances = distancesNames.filter(pair => pair.distance <= 2);
-    suitableDistances.sort((cur, next) => cur.distance > next.distance ? 1 : -1);
-    suitableDistances = suitableDistances.slice(0, 10);
-    this.suitableNames = suitableDistances.map(pair => pair.name);
+    distancesNames.sort((cur, next) => cur.distance > next.distance ? 1 : -1);
+    distancesNames = distancesNames.slice(0, this.wordsLimit);
+    this.suitableNames = distancesNames.map(pair => pair.name);
   }
 
   handleSelect(name) {
