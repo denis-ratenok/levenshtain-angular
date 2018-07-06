@@ -5,6 +5,13 @@ export class LevenshtainService {
 
   constructor() { }
 
+  static changeModifications(method, modifications, j) {
+    modifications.push({
+      position: j - 1,
+      method
+    });
+  }
+
   getDistanceWithSwap (str1, str2, limit) {
     const matrix = this.levenshtainWithSwaps(str1, str2, limit);
     if (matrix === undefined) {
@@ -92,55 +99,37 @@ export class LevenshtainService {
           diagonal = (i && j) ? arr[i - 1][j - 1] : undefined;
 
     if (!i && left < curr) {
-      this.changeModifications('insert', modifications, j);
+      LevenshtainService.changeModifications('delete', modifications, j);
       arr.map(list => { list.pop(); });
 
     } else if (!j && up < curr) {
-
-      this.changeModifications('delete', modifications, j);
+      LevenshtainService.changeModifications('insert', modifications, j);
       arr.pop();
 
-    } else if (curr === up && curr === left &&
-      curr === diagonal && up === left &&
-      up === diagonal && left === diagonal) {
-
-      this.changeModifications('swap', modifications, j - 1);
-      arr.pop();
-      arr.map(list => { list.pop(); });
-      arr.pop();
-      arr.map(list => { list.pop(); });
-
-    } else if (diagonal <= up &&
-      diagonal <= left) {
-
-      if (diagonal < curr) {
-        this.changeModifications('replace', modifications, j);
-      }
-      arr.pop();
-      arr.map(list => { list.pop(); });
-
+    } else if (curr === up && curr === left && curr === diagonal) {
+        LevenshtainService.changeModifications('swap', modifications, j);
+        arr.pop();
+        arr.map(list => { list.pop(); });
+        arr.pop();
+        arr.map(list => { list.pop(); });
+    } else if (diagonal <= up && diagonal <= left) {
+        if (diagonal < curr) {
+          LevenshtainService.changeModifications('replace', modifications, j);
+        }
+        arr.pop();
+        arr.map(list => { list.pop(); });
     } else if (up <= left) {
-
-      if (up < curr) {
-        this.changeModifications('delete', modifications, j);
-      }
-      arr.pop();
-
+        if (up < curr) {
+          LevenshtainService.changeModifications('insert', modifications, j);
+        }
+       arr.pop();
     } else {
-
-      if (left < curr) {
-        this.changeModifications('insert', modifications, j);
-      }
-      arr.map(list => {list.pop(); });
+        if (left < curr) {
+          LevenshtainService.changeModifications('delete', modifications, j);
+        }
+        arr.map(list => {list.pop(); });
     }
 
     return this.findModifications(arr, modifications);
-  }
-
-  changeModifications(method, modifications, j) {
-    modifications.push({
-      position: j - 1,
-      method
-    });
   }
 }

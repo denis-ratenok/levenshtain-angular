@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+.delete {
+  background: rgba(255, 30, 0, 0.8);
+}
+.insert {
+  background: #ffecb3;
+}
+.replace {
+  background: rgba(255, 143, 0, 1);
+}
+.swap {
+  background: #f0f4c3;
+}
