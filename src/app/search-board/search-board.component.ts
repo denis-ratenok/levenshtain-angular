@@ -19,6 +19,10 @@ export class SearchBoardComponent implements OnInit {
   constructor(private dataService: DataService,
               private levenshtainService: LevenshtainService) {}
 
+  ngOnInit() {
+    this.dataService.getData().subscribe(data => this.allWords = data);
+  }
+
   @Input() distanceLimit: number;
   @Input() wordsLimit: number;
   @Input() placeholder: string;
@@ -106,7 +110,9 @@ export class SearchBoardComponent implements OnInit {
                 space += '&#8194;';
               }
             });
-            modName[mod.position] = `${modName[mod.position]}<span class="insert">${space}</span>`;
+            mod.position > -1 ?
+              modName[mod.position] = `${modName[mod.position]}<span class="insert">${space}</span>`
+              : modName[0] = `<span class="insert">${space}</span>${modName[0]}`;
             break;
           case 'swap':
             modName[mod.position - 1] = `<span class="swap">${modName[mod.position - 1]}</span>`;
@@ -116,10 +122,6 @@ export class SearchBoardComponent implements OnInit {
       const modNameStr = modName.reduce((curr, result) => curr + result);
       this.namesAfterModifications.push(modNameStr);
     });
-  }
-
-  ngOnInit() {
-    this.dataService.getData().subscribe(data => this.allWords = data);
   }
 
 }

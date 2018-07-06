@@ -7,7 +7,7 @@
 <ul>
   <li *ngFor="let name of namesAfterModifications; let i = index"
       (click)="handleSelect(i)"
-      [ngClass]="{focus: i === numberSelectName}"
+      [ngClass]="{focus: i === numberSelect}"
   >
     <app-proposed-item [value]="name"></app-proposed-item>
   </li>
