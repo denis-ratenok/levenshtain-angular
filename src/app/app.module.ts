@@ -7,7 +7,9 @@ import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {DataService} from './services/data.service';
 import {LevenshtainService} from './services/levenshtain.service';
+import { RateReducerService } from './services/rate-reducer.service';
 import { ProposedItemComponent } from './proposed-item/proposed-item.component';
+
 
 @NgModule({
   declarations: [
@@ -20,7 +22,7 @@ import { ProposedItemComponent } from './proposed-item/proposed-item.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [DataService, LevenshtainService],
+  providers: [DataService, LevenshtainService, RateReducerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

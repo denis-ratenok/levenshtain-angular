@@ -1,6 +1,7 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {DataService} from '../services/data.service';
 import {LevenshtainService} from '../services/levenshtain.service';
+import {RateReducerService} from '../services/rate-reducer.service';
 
 
 @Component({
@@ -9,33 +10,34 @@ import {LevenshtainService} from '../services/levenshtain.service';
   styleUrls: ['./search-board.component.css']
 })
 export class SearchBoardComponent implements OnInit {
-  allWords: object;
-  suitableWords = [];
-  namesAfterModifications = [];
-  searchWord: string;
-  confirmWord: string;
-  numberSelect = -1;
-
-  constructor(private dataService: DataService,
-              private levenshtainService: LevenshtainService) {}
-
-  ngOnInit() {
-    this.dataService.getData().subscribe(data => this.allWords = data);
-  }
+  public allWords: object;
+  public suitableWords = [];
+  public namesAfterModifications = [];
+  public searchWord: string;
+  public confirmWord: string;
+  public numberSelect = -1;
+  // this.filterAndApplyModifications with delay in 50ms
+  private doChangeWithDelay = this.rateReducerService.delay(this.filterAndApplyModifications, 50);
 
   @Input() distanceLimit: number;
   @Input() wordsLimit: number;
   @Input() placeholder: string;
+  @Input() url: string;
 
-  handleChange(value) {
-    this.numberSelect = -1;
-    if (!value.length) {
-      this.namesAfterModifications = [];
-      return;
-    }
+  constructor(private dataService: DataService,
+              private levenshtainService: LevenshtainService,
+              private rateReducerService: RateReducerService) {}
+
+  ngOnInit() {
+    this.dataService.getData(this.url)
+      .subscribe(data => this.allWords = data);
+  }
+
+
+  filterAndApplyModifications(word) {
     let namesWithDist = [];
     for (const name of Object.keys(this.allWords)) {
-      const distance = this.levenshtainService.getDistanceWithSwap(value, name, this.distanceLimit);
+      const distance = this.levenshtainService.getDistanceWithSwap(word, name, this.distanceLimit);
       if (distance !== undefined) {
         namesWithDist.push({name, distance});
       }
@@ -47,6 +49,16 @@ export class SearchBoardComponent implements OnInit {
     this.namesAfterModifications = [];
 
     this.applyModifications(this.suitableWords);
+  }
+
+  handleChange(value) {
+    this.numberSelect = -1;
+    if (!value.length) {
+      this.namesAfterModifications = [];
+      return;
+    }
+
+    this.doChangeWithDelay(value);
   }
 
   handleSelect(i) {

@@ -6,7 +6,7 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
-  getData() {
-    return this.http.get('https://gist.githubusercontent.com/ptigas/1965523/raw/efb6272691330649d12e3abbc5f453a04cbc1cf0/names.json');
+  getData(url) {
+    return this.http.get(url);
   }
 }
